@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olist E-Commerce End-to-End Case Study · Afrin S</title>
+<meta name="description" content="SQL + Python + Power BI case study: only 3% of customers repeat, so the real lever is first-order delivery reliability, not retention.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231e4fd8%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 font-family=%22Georgia,serif%22 fill=%22%23ffffff%22 text-anchor=%22middle%22>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="brand" href="../index.html#top">
+        <span class="brand-mark">AS</span>
+        <span class="brand-text"><b>Afrin S</b><span>Data Analyst</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#experience">Experience</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="case-hero bg-a">
+    <div class="wrap reveal in">
+      <span class="kicker">Case Study · Project 3 · Flagship</span>
+      <h1>Olist E-Commerce End-to-End Case Study</h1>
+      <p class="meta">SQLite (real SQL joins) · Python (pandas, SciPy, RFM) · Power BI (7-table relational model, DAX) · Brazilian e-commerce, Oct 2016–Aug 2018</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/AfrinShahulHameed/olist-ecommerce-analytics" target="_blank" rel="noopener">View Code on GitHub</a>
+        <a class="btn" href="../index.html#projects">← All Projects</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="case-body bg-b">
+    <div class="case-inner">
+
+    <div class="pitch-callout">
+      Leadership wanted an end-to-end view of an e-commerce marketplace: revenue, delivery, sellers, and customers. The standard playbook here would be to build an RFM model and target retention, but only 3% of customers ever order twice, so that framing doesn't hold up. The real lever turned out to be first-order delivery reliability, worth R$1.16 million in order value sitting in late shipments.
+    </div>
+
+    <h2>The Problem</h2>
+    <p>Leadership wanted one end-to-end view: what's driving revenue, where deliveries are failing, which sellers are underperforming, and which customers are actually worth retaining. This meant answering what the revenue trend looks like, where delivery is failing and whether it actually matters to customers, which sellers and categories are winning or losing, and critically, whether "retention" is even the right frame for this business.</p>
+
+    <h2>Key Numbers</h2>
+    <div class="stat-strip">
+      <div class="s"><b>R$15.7M</b><span>total revenue, ~93,358 customers</span></div>
+      <div class="s"><b>3.0%</b><span>customers who ever order a 2nd time</span></div>
+      <div class="s"><b>4.29 vs 2.27</b><span>avg review, on-time vs late delivery</span></div>
+      <div class="s"><b>R$1.16M</b><span>order value in late shipments (8.8%)</span></div>
+      <div class="s"><b>7.9% vs 4.5%</b><span>cross-state vs same-state late rate</span></div>
+      <div class="s"><b>t=100.97</b><span>on-time vs late review gap, p&lt;.000001</span></div>
+    </div>
+
+    <h2>Decisions &amp; Approach</h2>
+    <ul>
+      <li><b>A real relational database, not a flattened CSV.</b> All 9 source CSVs loaded into an actual SQLite database with indexes on the join keys used repeatedly.</li>
+      <li><b>5 SQL queries saved separately, and actually executed</b>, not hand-copied results, monthly revenue, delivery stats, seller leaderboard, category revenue, payment breakdown.</li>
+      <li><b>Bottom-seller ranking required ≥5 orders</b>, a documented judgment call so one bad order can't make a low-volume seller look artificially terrible.</li>
+      <li><b>RFM segmentation built with relative quartiles</b>, Recency, Frequency, and Monetary each split into quartiles and mapped to Champions / Loyal / Potential / At-Risk / Lost.</li>
+      <li><b>Repeat-purchase rate checked explicitly, not assumed,</b> which is exactly what surfaced the 3% headline finding instead of it hiding inside a routine RFM run.</li>
+    </ul>
+
+    <h2>What the Data Showed</h2>
+    <p>Only 3.0% of customers ever place a second order. Because RFM's Frequency dimension is nearly binary (1 order vs 2+) for almost everyone, "Champions" and "Loyal" segments mostly reflect big first-order spend, not real repeat loyalty, stating that plainly reframes the whole customer strategy. Meanwhile, delivery lateness is a real, quantified driver of bad reviews: on-time deliveries average 4.29 stars, late ones average 2.27, a statistically significant gap (t=100.97, p&lt;0.000001) worth R$1,158,921 in order value. Cross-state shipping nearly doubles the late-delivery rate (7.9% vs 4.5%), a concrete, targetable logistics finding rather than a guess.</p>
+
+    <h2>Recommendations</h2>
+    <ol>
+      <li>Reframe the customer strategy around first-order delivery reliability, not retention campaigns.</li>
+      <li>Prioritize logistics fixes on cross-state routes specifically, a clean, targetable segment.</li>
+      <li>Audit the specific top-10-revenue seller with a 3.35 average review, high volume is masking a satisfaction problem.</li>
+      <li>Treat "Champions"/"Loyal" RFM labels as spend-tier labels, not loyalty labels, when presenting to stakeholders.</li>
+    </ol>
+
+    <h2>Technical Build</h2>
+    <p>Seven related Power BI tables (orders, order_items, customers, sellers, reviews, payments, and a precomputed RFM table) mirroring the real SQL joins, not one flat CSV. A real bug hit and fixed live: two measures for cross-state vs same-state late rate returned identical numbers, because Power BI only lets filters flow one way across a many-to-one relationship by default. The fix was setting that relationship's cross-filter direction to Both in Model view.</p>
+    <pre><code>Total Revenue        = SUM(order_items[price]) + SUM(order_items[freight_value])
+Avg Delivery Days    = AVERAGEX(orders, DATEDIFF(orders[order_purchase_timestamp], orders[order_delivered_customer_date], DAY))
+% Cross-State Late   = CALCULATE(AVERAGE(orders[is_late]), order_items[cross_state] = 1)
+% Same-State Late    = CALCULATE(AVERAGE(orders[is_late]), order_items[cross_state] = 0)</code></pre>
+
+    <h2>Dashboard Preview</h2>
+    <div class="gallery">
+      <a href="https://raw.githubusercontent.com/AfrinShahulHameed/olist-ecommerce-analytics/main/screenshots/Revenue%20Overview.png" target="_blank"><img src="https://raw.githubusercontent.com/AfrinShahulHameed/olist-ecommerce-analytics/main/screenshots/Revenue%20Overview.png" alt="Revenue Overview page" loading="lazy"></a>
+      <a href="https://raw.githubusercontent.com/AfrinShahulHameed/olist-ecommerce-analytics/main/screenshots/Delivery%20%26%20Reviews.png" target="_blank"><img src="https://raw.githubusercontent.com/AfrinShahulHameed/olist-ecommerce-analytics/main/screenshots/Delivery%20%26%20Reviews.png" alt="Delivery and Reviews page" loading="lazy"></a>
+    </div>
+
+    <h2>Limitations</h2>
+    <div class="limits">
+      <ul style="margin-bottom:0;">
+        <li>The 3% repeat rate is structural to this 2016–2018 window, some "one-time" customers may have ordered again outside it.</li>
+        <li>RFM quartile cuts are relative to this dataset, not fixed business thresholds.</li>
+        <li>Delivery-delay-vs-review correlation is association, not proven causation.</li>
+        <li>Cross-state late-rate finding doesn't control for actual shipping distance.</li>
+      </ul>
+    </div>
+
+    <p style="margin-top:36px;"><a class="btn" href="../index.html#projects">← Back to all projects</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© 2026 Afrin S · Chennai, India</span>
+      <span><a href="mailto:afrinaishu2004@gmail.com">afrinaishu2004@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>

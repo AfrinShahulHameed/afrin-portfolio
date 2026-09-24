@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airline Delay & Operations Performance · Afrin S</title>
+<meta name="description" content="Tableau case study: the airline everyone blames isn't the real worst performer, and the biggest delay cause is structural, not any one carrier.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231e4fd8%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 font-family=%22Georgia,serif%22 fill=%22%23ffffff%22 text-anchor=%22middle%22>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="brand" href="../index.html#top">
+        <span class="brand-mark">AS</span>
+        <span class="brand-text"><b>Afrin S</b><span>Data Analyst</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#experience">Experience</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="case-hero bg-a">
+    <div class="wrap reveal in">
+      <span class="kicker">Case Study · Project 2</span>
+      <h1>Airline Delay &amp; Operations Performance</h1>
+      <p class="meta">Tableau (calculated fields, cross-filtering dashboard) · Python (pandas, SciPy) · 2015 US DOT flights, Q1 2015, 1.4M flights from a 5.8M-row raw file</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/AfrinShahulHameed/airline-delay-ops-analytics" target="_blank" rel="noopener">View Code on GitHub</a>
+        <a class="btn" href="../index.html#projects">← All Projects</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="case-body bg-b">
+    <div class="case-inner">
+
+    <div class="pitch-callout">
+      Network ops wanted to know which carriers were really driving delays. Spirit has the worst reputation with flyers, but the data showed Frontier and American Eagle were actually the two worst performers, a gap confirmed statistically significant, not noise. The bigger finding was that the single largest delay cause nationally wasn't any airline's own operations, it was cascading "late aircraft" delay, bigger than every carrier's controllable delay combined.
+    </div>
+
+    <h2>The Problem</h2>
+    <p>A network operations team wanted to know which carriers, airports, and routes were actually driving delays and cancellations, what was causing them, and where an SLA renegotiation or infrastructure fix would pay off. Three questions had to be answered: which carriers/airports genuinely have the worst on-time performance, what's actually driving delays, and what would fixing the worst segment be worth.</p>
+
+    <h2>Key Numbers</h2>
+    <div class="stat-strip">
+      <div class="s"><b>78.9%</b><span>baseline on-time rate, Q1 2015</span></div>
+      <div class="s"><b>65.0%</b><span>Frontier's on-time rate (the real worst)</span></div>
+      <div class="s"><b>71.9%</b><span>Spirit's on-time rate, only 4th-worst</span></div>
+      <div class="s"><b>39.3% vs 31.7%</b><span>Late Aircraft vs Airline/Carrier delay share</span></div>
+      <div class="s"><b>9.66%</b><span>American Eagle cancellation rate</span></div>
+      <div class="s"><b>3 of 5</b><span>worst routes touching Chicago O'Hare</span></div>
+    </div>
+
+    <h2>Decisions &amp; Approach</h2>
+    <ul>
+      <li><b>Scope cut to Q1 2015, a real calendar quarter, not a random sample.</b> A random sample would break within-quarter seasonality (weather-driven delay patterns); a real quarter keeps that structure intact.</li>
+      <li><b>Delay defined up front as ≥15 minutes late</b>, the standard US DOT definition, so it isn't an arbitrary, challengeable cutoff.</li>
+      <li><b>Cancellations tracked as their own metric</b>, not folded into the delay average, since a cancelled flight has no arrival-delay value at all.</li>
+      <li><b>A real 3-table join</b>, flights joined to airlines and airports, not a flat pre-joined CSV, with a join-key collision caught and fixed explicitly before it could silently corrupt a column.</li>
+      <li><b>Routes filtered to ≥200 flights</b> before ranking "worst routes," so one bad day at a low-volume route can't look systemic.</li>
+    </ul>
+
+    <h2>What the Data Showed</h2>
+    <p>Frontier Airlines (65.0% on-time) and American Eagle (67.3%) are the two real worst performers, not Spirit, which only ranks 4th-worst (71.9%) despite its reputation. The Frontier-vs-American-Eagle gap is statistically confirmed (t=6.16, p&lt;0.000001). More importantly, delay-minutes broken down by cause show Late Aircraft delay, a cascading effect from a previous flight running late, at 39.3% of all delay-minutes nationally, bigger than every carrier's own controllable delay (31.7%) combined. That reframes the fix from "discipline an airline" to "fix network-scheduling buffers." Chicago O'Hare (ORD) shows up in 3 of the 5 worst routes by average delay, pointing at an airport-level bottleneck rather than a single carrier's problem.</p>
+
+    <h2>Recommendations</h2>
+    <ol>
+      <li>Renegotiate ground-handling and turnaround SLAs at ORD specifically, the common thread across 3 of the 5 worst routes.</li>
+      <li>Target schedule buffer/recovery time on Frontier and American Eagle's tightest rotations.</li>
+      <li>Treat American Eagle's cancellation problem as separate from its delay problem, it needs its own root-cause review.</li>
+      <li>Invest in schedule padding at the 5 highest late-aircraft-delay hubs (ORD, DFW, DEN, LGA, LAX), 22.7% of national impact is concentrated there.</li>
+    </ol>
+
+    <h2>Technical Build</h2>
+    <p>Built in Tableau, with a few real bugs hit and fixed along the way: the CSV stored Year/Month/Day as separate columns, so a calculated field (<code>MAKEDATE([Year],[Month],[DAY])</code>) built a real date field. Scheduled Departure was stored as an HHMM number like 1435, parsed with <code>INT([Scheduled Departure]/100)</code> to get just the hour. The On-Time Rate field defaulted to SUM aggregation, giving a nonsensical range instead of a percentage, fixed by switching it to Average. And the delay-cause chart initially split into 5 separate mini-panels instead of one grouped bar, fixed by using Tableau's combined Measure Values pill instead of 5 separate SUM pills.</p>
+
+    <h2>Dashboard Preview</h2>
+    <div class="gallery">
+      <a href="https://raw.githubusercontent.com/AfrinShahulHameed/airline-delay-ops-analytics/main/screenshots/Airline%20Delay%20Overview.png" target="_blank"><img src="https://raw.githubusercontent.com/AfrinShahulHameed/airline-delay-ops-analytics/main/screenshots/Airline%20Delay%20Overview.png" alt="Airline Delay dashboard overview" loading="lazy"></a>
+    </div>
+
+    <h2>Limitations</h2>
+    <div class="limits">
+      <ul style="margin-bottom:0;">
+        <li>Q1-only sample skews toward winter/weather-driven delays, should be checked against a second quarter.</li>
+        <li>The ~$1.24B quarterly cost estimate uses an external $75/minute aviation-economics benchmark, not a dataset-derived figure.</li>
+        <li>Cancellation reason codes are self-reported by carriers, not independently verified.</li>
+        <li>Carrier comparisons don't control for route mix or hub exposure.</li>
+      </ul>
+    </div>
+
+    <p style="margin-top:36px;"><a class="btn" href="../index.html#projects">← Back to all projects</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© 2026 Afrin S · Chennai, India</span>
+      <span><a href="mailto:afrinaishu2004@gmail.com">afrinaishu2004@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>

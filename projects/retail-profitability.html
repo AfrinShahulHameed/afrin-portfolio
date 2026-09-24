@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retail Profitability & Inventory Health · Afrin S</title>
+<meta name="description" content="Power BI case study: uncovering that Furniture's margin problem is a discounting problem, not a category problem.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231e4fd8%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 font-family=%22Georgia,serif%22 fill=%22%23ffffff%22 text-anchor=%22middle%22>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a class="brand" href="../index.html#top">
+        <span class="brand-mark">AS</span>
+        <span class="brand-text"><b>Afrin S</b><span>Data Analyst</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#experience">Experience</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle theme">☀</button>
+        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="case-hero bg-a">
+    <div class="wrap reveal in">
+      <span class="kicker">Case Study · Project 1</span>
+      <h1>Retail Profitability &amp; Inventory Health</h1>
+      <p class="meta">Power BI (DAX, Row-Level Security, drill-through) · Python (pandas, SciPy) · Superstore dataset, 9,994 order-line rows, 2014–2017, USD</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/AfrinShahulHameed/retail-profitability-dashboard" target="_blank" rel="noopener">View Code on GitHub</a>
+        <a class="btn" href="../index.html#projects">← All Projects</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="case-body bg-b">
+    <div class="case-inner">
+
+    <div class="pitch-callout">
+      Furniture looked like a weak category on paper, but the margin problem wasn't really about Furniture, it was about discounting. About 9% of order lines carried a discount of 50% or more, and those lines alone accounted for roughly a quarter of all profit lost. The gap between Furniture and Technology margin held up under a statistical test, Tables came out as the single worst sub-category, and Central region's Furniture line was the only region-category combination in the business that was unprofitable outright.
+    </div>
+
+    <h2>The Problem</h2>
+    <p>Leadership at a mid-size retail chain suspected some product categories looked strong on revenue but were quietly bleeding margin, and that certain products were running out at the wrong times. They wanted one view showing profitability and inventory health together, not just a sales report. Three questions had to be answered: which categories generate strong sales but weak or negative profit, is there a real regional profitability gap, and which products are most at risk of stocking out with no direct inventory data available.</p>
+
+    <h2>Key Numbers</h2>
+    <div class="stat-strip">
+      <div class="s"><b>$2.30M</b><span>total sales, 2014–2017</span></div>
+      <div class="s"><b>12.5%</b><span>blended profit margin</span></div>
+      <div class="s"><b>+20.4%</b><span>2017 YoY sales growth</span></div>
+      <div class="s"><b>9.2%</b><span>order lines with ≥50% discount</span></div>
+      <div class="s"><b>$97,065</b><span>profit destroyed by those lines</span></div>
+      <div class="s"><b>-8.6%</b><span>Tables sub-category margin (a real loss)</span></div>
+    </div>
+
+    <h2>Decisions &amp; Approach</h2>
+    <ul>
+      <li><b>Postal Code cast as a string, not a number</b>, it's an identifier, treating it numerically would drop leading zeros and invite meaningless math on it.</li>
+      <li><b>Duplicate and blank rows checked programmatically</b>, zero found, verified rather than assumed.</li>
+      <li><b>Heavy-discount lines flagged, not dropped.</b> Any line with a discount of 50%+ got a flag (922 lines, 9.2% of the data) so the dashboard could show blended vs underlying margin side by side, instead of letting real heavy discounts hide inside a misleading category average.</li>
+      <li><b>A stockout-risk proxy, explicitly labeled as a proxy.</b> With no real inventory field, risk is estimated as high order-frequency plus low average quantity per line, a pattern consistent with fast sell-through and reactive restocking.</li>
+      <li><b>A proper Date dimension table</b> built with <code>CALENDAR()</code>, so real DAX time-intelligence functions like year-over-year growth work correctly.</li>
+    </ul>
+
+    <h2>What the Data Showed</h2>
+    <p>Furniture's margin problem more than doubles when the 922 heavy-discount lines are excluded, from 2.5% to 5.8%, proving the category itself isn't structurally bad, a subset of its transactions are. The gap between Furniture (1.7% average per-line margin) and Technology (21.1%) held up under a Welch's t-test (t=12.75, p&lt;0.000001), so it's a real, structural difference, not sampling noise. Tables came out as the single worst sub-category in the entire dataset, an actual $17,725 loss on $206,966 in sales, and Central region's overall margin (7.9%) was nearly half of West's (14.9%), driven specifically by Central's Furniture line going negative while every other region's stayed positive.</p>
+
+    <h2>Recommendations</h2>
+    <ol>
+      <li>Put a discount-approval ceiling on Furniture, especially Tables and Bookcases, anything 50%+ off should require sign-off.</li>
+      <li>Investigate Central region's Furniture pricing specifically, the only region+category combination that's outright loss-making.</li>
+      <li>Treat the top 5 stockout-risk SKUs (Phones, Furnishings, Paper, Storage, Appliances) as priority for a real inventory review.</li>
+      <li>Don't read +20.4% YoY growth as pure good news, it's scaling up a discounting pattern that's already destroying profit.</li>
+    </ol>
+
+    <h2>Technical Build</h2>
+    <p>A 3-page Power BI dashboard (Executive Overview, Category Deep-Dive, Regional &amp; Product Performance) with a real Row-Level Security role restricting a "Regional Manager - West" view to West-region data only. Core measures:</p>
+    <pre><code>Total Sales      = SUM(Orders[Sales])
+Total Profit     = SUM(Orders[Profit])
+Profit Margin %  = DIVIDE([Total Profit], [Total Sales])
+Sales LY         = CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))
+YoY Growth %     = DIVIDE([Total Sales] - [Sales LY], [Sales LY])
+Low Margin Flag  = IF([Profit Margin %] &lt; 0.05, "Low Margin", "OK")</code></pre>
+
+    <h2>Dashboard Preview</h2>
+    <div class="gallery">
+      <a href="https://raw.githubusercontent.com/AfrinShahulHameed/retail-profitability-dashboard/main/screenshots/Executive%20Overview.png" target="_blank"><img src="https://raw.githubusercontent.com/AfrinShahulHameed/retail-profitability-dashboard/main/screenshots/Executive%20Overview.png" alt="Executive Overview page" loading="lazy"></a>
+      <a href="https://raw.githubusercontent.com/AfrinShahulHameed/retail-profitability-dashboard/main/screenshots/Category%20Deep-Dive.png" target="_blank"><img src="https://raw.githubusercontent.com/AfrinShahulHameed/retail-profitability-dashboard/main/screenshots/Category%20Deep-Dive.png" alt="Category Deep-Dive page" loading="lazy"></a>
+    </div>
+
+    <h2>Limitations</h2>
+    <div class="limits">
+      <ul style="margin-bottom:0;">
+        <li>Stockout-risk ranking is a proxy, not real inventory-on-hand data.</li>
+        <li>Discount reason is unknown, the recommendation to cap discounts assumes most are avoidable.</li>
+        <li>Four years of data with no formal seasonality decomposition.</li>
+        <li>Single US retail chain, findings shouldn't be generalized without a second dataset.</li>
+      </ul>
+    </div>
+
+    <p style="margin-top:36px;"><a class="btn" href="../index.html#projects">← Back to all projects</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© 2026 Afrin S · Chennai, India</span>
+      <span><a href="mailto:afrinaishu2004@gmail.com">afrinaishu2004@gmail.com</a></span>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+</body>
+</html>
